@@ -1,0 +1,4 @@
+name: BedrockMinerPlugin
+version: '${project.version}'
+main: aplini.bedrockminerplugin.BedrockMinerPlugin
+api-version: '1.19'
