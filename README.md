@@ -1,4 +1,4 @@
-# BedrockMinerPlugin `v1.1`
+# BedrockMinerPlugin `v1.2`
 适用于插件服务端的快速破基岩插件  
 
 
