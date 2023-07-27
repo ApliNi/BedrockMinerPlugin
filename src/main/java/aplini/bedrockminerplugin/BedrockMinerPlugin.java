@@ -91,13 +91,13 @@ class onPlayerInteractEvent implements Listener {
             }
 
             // 要求玩家背包中有 活塞/ 红石火把/ 黏液块
-            if(!playerInventory.contains(Material.PISTON)){ // 活塞
+            if(!playerInventory.contains(Material.PISTON, 10)){ // 活塞
                 return;
             }
-            if(!playerInventory.contains(Material.REDSTONE_TORCH)){ // 红石火把
+            if(!playerInventory.contains(Material.REDSTONE_TORCH, 10)){ // 红石火把
                 return;
             }
-            if(!playerInventory.contains(Material.SLIME_BLOCK)){ // 黏液块
+            if(!playerInventory.contains(Material.SLIME_BLOCK, 10)){ // 黏液块
                 return;
             }
 
@@ -120,10 +120,12 @@ class onPlayerInteractEvent implements Listener {
             BlockList.add(clickedBlock);
 
 
-            // 从背包中删除一个活塞
-            removePlayerInventoryItem(playerInventory, ImmutableMap.of(
-                    Material.PISTON, 1
-            ));
+            // 有 5% 的几率从背包中删除一个活塞
+            if(new Random().nextInt(100) < 5){
+                removePlayerInventoryItem(playerInventory, ImmutableMap.of(
+                        Material.PISTON, 1
+                ));
+            }
 
             try{
 
