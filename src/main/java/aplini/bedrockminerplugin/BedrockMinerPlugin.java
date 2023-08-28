@@ -15,8 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public final class BedrockMinerPlugin extends JavaPlugin {
@@ -46,20 +45,24 @@ class onPlayerInteractEvent implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
 
-        // 要求点击的是基岩
-        Block clickedBlock = event.getClickedBlock();
-        if(clickedBlock == null || clickedBlock.getType() != Material.BEDROCK){
-            return;
-        }
-
-        // 要求使用左键
-        if(event.getAction() != Action.LEFT_CLICK_BLOCK){
-            return;
-        }
-
         // 异步
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
+        CompletableFuture.runAsync(() -> {
+
+            // 要求点击的是基岩
+            Block clickedBlock = event.getClickedBlock();
+            if(clickedBlock == null || clickedBlock.getType() != Material.BEDROCK){
+                return;
+            }
+
+            // 要求使用左键
+            if(event.getAction() != Action.LEFT_CLICK_BLOCK){
+                return;
+            }
+
+            // Lock :: 如果这个方块正在处理队列中
+            if(BlockList.contains(clickedBlock)){
+                return;
+            }
 
             // 获取玩家和玩家库存
             Player player = event.getPlayer();
@@ -67,7 +70,6 @@ class onPlayerInteractEvent implements Listener {
 
             // 要求玩家主手有下界合金镐
             ItemStack playerItemInMainHand = playerInventory.getItemInMainHand();
-            // itemInMainHand.getType().equals(Material.NETHERITE_PICKAXE)
             if(playerItemInMainHand.getType() != Material.NETHERITE_PICKAXE){
                 return;
             }
@@ -112,10 +114,6 @@ class onPlayerInteractEvent implements Listener {
             // 检查结束
             //
 
-            // Lock :: 如果这个方块正在处理队列中
-            if(BlockList.contains(clickedBlock)){
-                return;
-            }
             // 将这个基岩方块添加到处理队列中
             BlockList.add(clickedBlock);
 
@@ -213,15 +211,17 @@ class onPlayerInteractEvent implements Listener {
 
             // 在主线程中
             Bukkit.getScheduler().runTask(plugin, () -> {
-                // 破坏方块
-                clickedBlock.setType(Material.AIR);
+                // 如果这个方块还是基岩
+                if(clickedBlock.getType() == Material.BEDROCK){
+                    // 破坏方块
+                    clickedBlock.setType(Material.AIR);
+                }
             });
 
             // Lock :: 释放这个方块的锁
             BlockList.remove(clickedBlock);
 
         });
-        executor.shutdown();
     }
 
 
