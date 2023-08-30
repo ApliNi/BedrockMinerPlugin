@@ -1,6 +1,8 @@
 package aplini.bedrockminerplugin;
 
 import com.google.common.collect.ImmutableMap;
+import net.coreprotect.CoreProtect;
+import net.coreprotect.CoreProtectAPI;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
@@ -12,6 +14,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
@@ -20,11 +23,21 @@ import java.util.concurrent.TimeUnit;
 
 public final class BedrockMinerPlugin extends JavaPlugin {
 
+
+
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        // 连接到 CoreProtect 插件
+        CoreProtectAPI coreProtectAPI = null;
+        Plugin coreProtect = getServer().getPluginManager().getPlugin("CoreProtect");
+        if(!(coreProtect instanceof CoreProtect) || !coreProtect.isEnabled()){
+            getLogger().info("未安装 CoreProtect 插件, 方块破坏不会被记录");
+        }else{
+            coreProtectAPI = ((CoreProtect) coreProtect).getAPI();
+            getLogger().info("已连接到 CoreProtect 插件!");
+        }
         // 注册监听器
-        getServer().getPluginManager().registerEvents(new onPlayerInteractEvent(this), this);
+        getServer().getPluginManager().registerEvents(new onPlayerInteractEvent(this, coreProtectAPI), this);
     }
 
     @Override
@@ -37,9 +50,13 @@ public final class BedrockMinerPlugin extends JavaPlugin {
 // 监听玩家交互
 class onPlayerInteractEvent implements Listener {
     private final BedrockMinerPlugin plugin;
+    private final boolean EnableCoreProtect;
+    private final CoreProtectAPI coreProtectAPI;
     private final List<Block> BlockList = new ArrayList<>();
-    public onPlayerInteractEvent(BedrockMinerPlugin plugin) {
+    public onPlayerInteractEvent(BedrockMinerPlugin plugin, CoreProtectAPI coreProtectAPI) {
         this.plugin = plugin;
+        this.coreProtectAPI = coreProtectAPI;
+        EnableCoreProtect = coreProtectAPI != null;
     }
 
     @EventHandler
@@ -59,13 +76,18 @@ class onPlayerInteractEvent implements Listener {
                 return;
             }
 
+            // 玩家是否有权限
+            Player player = event.getPlayer();
+            if(!player.hasPermission("BedrockMinerPlugin.use")){
+                return;
+            }
+
             // Lock :: 如果这个方块正在处理队列中
             if(BlockList.contains(clickedBlock)){
                 return;
             }
 
-            // 获取玩家和玩家库存
-            Player player = event.getPlayer();
+            // 获取玩家库存
             PlayerInventory playerInventory = player.getInventory();
 
             // 要求玩家主手有下界合金镐
@@ -208,15 +230,15 @@ class onPlayerInteractEvent implements Listener {
                 throw new RuntimeException(e);
             }
 
-
-            // 在主线程中
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                // 如果这个方块还是基岩
-                if(clickedBlock.getType() == Material.BEDROCK){
-                    // 破坏方块
-                    clickedBlock.setType(Material.AIR);
+            // 如果这个方块还是基岩
+            if(clickedBlock.getType() == Material.BEDROCK) {
+                // 在主线程中破坏方块
+                Bukkit.getScheduler().runTask(plugin, () -> clickedBlock.setType(Material.AIR));
+                // 使用 CoreProtect 记录这个方块被破坏
+                if(EnableCoreProtect && player.hasPermission("BedrockMinerPlugin.CoreProtect")){
+                    coreProtectAPI.logRemoval(player.getName(), location, Material.BEDROCK, null);
                 }
-            });
+            }
 
             // Lock :: 释放这个方块的锁
             BlockList.remove(clickedBlock);

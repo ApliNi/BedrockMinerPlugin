@@ -2,3 +2,13 @@ name: BedrockMinerPlugin
 version: '${project.version}'
 main: aplini.bedrockminerplugin.BedrockMinerPlugin
 api-version: '1.19'
+
+permissions:
+
+  BedrockMinerPlugin.use:
+    description: 允许使用此插件进行破基岩
+    default: true
+
+  BedrockMinerPlugin.CoreProtect:
+    description: 允许通过 CoreProtect 插件记录方块被破坏
+    default: true

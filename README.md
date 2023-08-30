@@ -6,11 +6,31 @@
 该插件并不通过 "特性" 实现破坏基岩; 而是检查是否满足一些条件, 然后模拟出粒子和声音效果, 最后删除基岩方块.  
 
 
-#### 条件
+#### 条件和特性
 1. 手持效率5的下界合金镐
 2. 急迫2药水效果 (来自信标)
 3. 背包中有活塞, 红石火把, 黏液块. 每种物品至少10个
 
-
-#### 使用和特性
 满足上述条件后左键点击基岩即可开始运行, 有 5% 几率扣除一个活塞作为 "损耗".  
+
+---
+
+#### 连接到插件
+- CoreProtect, 记录基岩方块被破坏
+
+
+#### 权限
+```yaml
+permissions:
+
+  BedrockMinerPlugin.use:
+    description: 允许使用此插件进行破基岩
+    default: true
+
+  BedrockMinerPlugin.CoreProtect:
+    description: 允许通过 CoreProtect 插件记录方块被破坏
+    default: true
+```
+
+
+
