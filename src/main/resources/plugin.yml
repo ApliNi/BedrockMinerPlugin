@@ -3,6 +3,9 @@ version: '${project.version}'
 main: aplini.bedrockminerplugin.BedrockMinerPlugin
 api-version: '1.19'
 
+softdepend:
+  - CoreProtect
+
 permissions:
 
   BedrockMinerPlugin.use:
