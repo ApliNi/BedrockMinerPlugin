@@ -82,6 +82,11 @@ class onPlayerInteractEvent implements Listener {
                 return;
             }
 
+            // 不是生存或冒险模式
+            if(player.getGameMode() != GameMode.SURVIVAL || player.getGameMode() != GameMode.ADVENTURE){
+                return;
+            }
+
             // Lock :: 如果这个方块正在处理队列中
             if(BlockList.contains(clickedBlock)){
                 return;
@@ -231,7 +236,7 @@ class onPlayerInteractEvent implements Listener {
             }
 
             // 如果这个方块还是基岩
-            if(clickedBlock.getType() == Material.BEDROCK) {
+            if(clickedBlock.getType() == Material.BEDROCK){
                 // 在主线程中破坏方块
                 Bukkit.getScheduler().runTask(plugin, () -> clickedBlock.setType(Material.AIR));
                 // 使用 CoreProtect 记录这个方块被破坏
