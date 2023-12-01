@@ -6,7 +6,7 @@
 
   <groupId>aplini</groupId>
   <artifactId>BedrockMinerPlugin</artifactId>
-  <version>1.4</version>
+  <version>1.5</version>
   <packaging>jar</packaging>
 
   <name>BedrockMinerPlugin</name>
@@ -71,7 +71,7 @@
       <dependency>
           <groupId>org.spigotmc</groupId>
           <artifactId>spigot-api</artifactId>
-          <version>1.19-R0.1-SNAPSHOT</version>
+          <version>1.20.1-R0.1-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
       <dependency>

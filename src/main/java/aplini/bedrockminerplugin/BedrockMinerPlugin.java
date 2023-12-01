@@ -21,6 +21,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public final class BedrockMinerPlugin extends JavaPlugin {
 
 
@@ -83,7 +85,7 @@ class onPlayerInteractEvent implements Listener {
             }
 
             // 不是生存或冒险模式
-            if(player.getGameMode() != GameMode.SURVIVAL || player.getGameMode() != GameMode.ADVENTURE){
+            if(player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE){
                 return;
             }
 

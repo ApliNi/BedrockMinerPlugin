@@ -1,4 +1,4 @@
-# BedrockMinerPlugin `v1.4`
+# BedrockMinerPlugin `v1.5`
 适用于插件服务端的快速破基岩插件  
 
 下载: https://modrinth.com/plugin/bedrockminerplugin
@@ -9,7 +9,7 @@
 该插件并不通过 "特性" 实现破坏基岩; 而是检查是否满足一些条件, 然后模拟出粒子和声音效果, 最后删除基岩方块.  
 
 
-#### 条件和特性
+### 条件和特性
 1. 生存或冒险模式
 2. 手持效率5的下界合金镐
 3. 急迫2药水效果 (来自信标)
@@ -19,11 +19,11 @@
 
 ---
 
-#### 连接到插件
+### 连接到插件
 - CoreProtect, 记录基岩方块被破坏
 
 
-#### 权限
+### 权限
 ```yaml
 permissions:
 
