@@ -1,4 +1,4 @@
-# BedrockMinerPlugin `v1.5`
+# BedrockMinerPlugin `v1.6`
 适用于插件服务端的快速破基岩插件  
 
 下载: https://modrinth.com/plugin/bedrockminerplugin

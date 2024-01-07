@@ -6,7 +6,7 @@
 
   <groupId>aplini</groupId>
   <artifactId>BedrockMinerPlugin</artifactId>
-  <version>1.5</version>
+  <version>1.6</version>
   <packaging>jar</packaging>
 
   <name>BedrockMinerPlugin</name>
