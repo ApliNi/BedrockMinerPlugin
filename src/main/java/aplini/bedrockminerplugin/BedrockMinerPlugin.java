@@ -146,7 +146,6 @@ class onPlayerInteractEvent implements Listener {
             // 将这个基岩方块添加到处理队列中
             BlockList.add(clickedBlock);
 
-
             // 有 5% 的几率从背包中删除一个活塞
             if(new Random().nextInt(100) < 5){
                 removePlayerInventoryItem(playerInventory, ImmutableMap.of(
@@ -154,102 +153,93 @@ class onPlayerInteractEvent implements Listener {
                 ));
             }
 
-            try{
+            // 声音和粒子效果 //
+            int delay = 0;
 
+            // 声音 :: 放置石头
+            Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F), delay);
+
+            // 声音 :: 放置石头
+            delay += 20;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F), delay);
+
+            delay += 20;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // 声音 :: 放置石头
                 world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
-
-                TimeUnit.MILLISECONDS.sleep(20);
-
-                // 声音 :: 放置石头
-                world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
-
-                TimeUnit.MILLISECONDS.sleep(20);
-
-                // 声音 :: 放置石头
-                world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
-
                 // 声音 :: 放置黏液块
                 world.playSound(location, Sound.BLOCK_SLIME_BLOCK_PLACE, 1F, 1F);
-
                 // 粒子效果 :: 黏液块
                 location.add(0.5, 0.5, 0.5);
                 world.spawnParticle(Particle.BLOCK_CRACK,
                         location, 40, 0.7, 0.7, 0.7, 2,
                         Material.SLIME_BLOCK.createBlockData());
+            }, delay);
 
-                TimeUnit.MILLISECONDS.sleep(20);
+            // 声音 :: 放置石头
+            delay += 20;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F), delay);
 
+            delay += 27;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // 声音 :: 放置石头
                 world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
-
-                TimeUnit.MILLISECONDS.sleep(27);
-
-                // 声音 :: 放置石头
-                world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
-
                 // 粒子效果 :: 红石火把
                 world.spawnParticle(Particle.BLOCK_CRACK,
                         location, 20, 0.5, 0.5, 0.5, 2,
                         Material.REDSTONE_TORCH.createBlockData());
-
                 // 声音 :: 放置石头
                 world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
+            }, delay);
 
-                TimeUnit.MILLISECONDS.sleep(52);
-
+            delay += 52;
+            location.add(0, 0.5, 0);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // 粒子效果 :: 活塞
-                location.add(0, 0.5, 0);
                 world.spawnParticle(Particle.BLOCK_CRACK,
                         location, 80, 1, 1.5, 1, 2,
                         Material.PISTON.createBlockData());
-
                 // 声音 :: 放置石头
                 world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
+            }, delay);
 
-                TimeUnit.MILLISECONDS.sleep(34);
+            // 声音 :: 活塞推出
+            delay += 34;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_PISTON_EXTEND, 1F, 1F), delay);
 
-                // 声音 :: 活塞推出
-                world.playSound(location, Sound.BLOCK_PISTON_EXTEND, 1F, 1F);
+            // 声音 :: 活塞推动方块
+            delay += 20;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_METAL_PLACE, 1F, 1F), delay);
 
-                TimeUnit.MILLISECONDS.sleep(20);
-
-                // 声音 :: 活塞推动方块
-                world.playSound(location, Sound.BLOCK_METAL_PLACE, 1F, 1F);
-
-                TimeUnit.MILLISECONDS.sleep(20);
-
+            delay += 20;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // 声音 :: 放置石头
                 world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
-
                 // 粒子效果 :: 基岩
-                location.add(0, -0.5, 0);
                 world.spawnParticle(Particle.BLOCK_CRACK,
                         location, 40, 0.5, 0.5, 0.5, 2,
                         Material.BEDROCK.createBlockData());
+            }, delay);
 
-                TimeUnit.MILLISECONDS.sleep(20);
+            // 声音 :: 破坏方块
+            delay += 20;
+            Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_STONE_BREAK, 1F, 1F), delay);
 
-                // 声音 :: 破坏方块
-                world.playSound(location, Sound.BLOCK_STONE_BREAK, 1F, 1F);
+            // 声音和粒子效果 END //
 
-            }catch (InterruptedException e){
-                throw new RuntimeException(e);
-            }
-
-            // 如果这个方块还是基岩
-            if(clickedBlock.getType() == Material.BEDROCK){
-                // 在主线程中破坏方块
-                Bukkit.getScheduler().runTask(plugin, () -> clickedBlock.setType(Material.AIR));
-                // 使用 CoreProtect 记录这个方块被破坏
-                if(EnableCoreProtect && player.hasPermission("BedrockMinerPlugin.CoreProtect")){
-                    coreProtectAPI.logRemoval(player.getName(), location, Material.BEDROCK, null);
+            // 在声音和粒子效果播放结束后运行破坏方块的代码
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                // 如果这个方块还是基岩
+                if(clickedBlock.getType() == Material.BEDROCK){
+                    clickedBlock.setType(Material.AIR);
+                    // 使用 CoreProtect 记录这个方块被破坏
+                    if(EnableCoreProtect && player.hasPermission("BedrockMinerPlugin.CoreProtect")){
+                        coreProtectAPI.logRemoval(player.getName(), location, Material.BEDROCK, null);
+                    }
+                    // Lock :: 释放这个方块的锁
+                    BlockList.remove(clickedBlock);
                 }
-            }
-
-            // Lock :: 释放这个方块的锁
-            BlockList.remove(clickedBlock);
-
+            }, delay);
         });
     }
 
