@@ -1,4 +1,4 @@
-# BedrockMinerPlugin `v1.6`
+# BedrockMinerPlugin
 适用于插件服务端的快速破基岩插件  
 
 下载: https://modrinth.com/plugin/bedrockminerplugin
@@ -6,7 +6,9 @@
 ---
 
 灵感来源于 [Fabric-Bedrock-Miner](https://github.com/LXYan2333/Fabric-Bedrock-Miner), 由于这个模组不能在一些特殊的服务器里使用而制作这个插件.  
-该插件并不通过 "特性" 实现破坏基岩; 而是检查是否满足一些条件, 然后模拟出粒子和声音效果, 最后删除基岩方块.  
+该插件并不通过 "特性" 实现破坏基岩; 而是检查是否满足一些条件, 然后模拟出粒子和声音效果并删除基岩方块.  
+
+从破坏方块开始, 到方块被破坏存在 4gt 的延迟.  
 
 
 ### 条件和特性

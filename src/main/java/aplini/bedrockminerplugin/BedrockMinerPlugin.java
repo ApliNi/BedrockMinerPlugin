@@ -13,15 +13,12 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-
-import static org.bukkit.Bukkit.getLogger;
 
 public final class BedrockMinerPlugin extends JavaPlugin {
 
@@ -153,6 +150,23 @@ class onPlayerInteractEvent implements Listener {
                 ));
             }
 
+
+            // 运行破坏方块的代码, 改为了固定的 4gt
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                // 如果这个方块还是基岩
+                if(clickedBlock.getType() == Material.BEDROCK){
+                    clickedBlock.setType(Material.AIR);
+                    // 使用 CoreProtect 记录这个方块被破坏
+                    if(EnableCoreProtect && player.hasPermission("BedrockMinerPlugin.CoreProtect")){
+                        coreProtectAPI.logRemoval(player.getName(), location, Material.BEDROCK, null);
+                    }
+                }
+                // Lock :: 释放这个方块的锁
+                BlockList.remove(clickedBlock);
+            }, 4);
+
+
+
             // 声音和粒子效果 //
             int delay = 0;
 
@@ -160,10 +174,10 @@ class onPlayerInteractEvent implements Listener {
             Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F), delay);
 
             // 声音 :: 放置石头
-            delay += 20;
+            delay += 1;
             Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F), delay);
 
-            delay += 20;
+            delay += 1;
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // 声音 :: 放置石头
                 world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
@@ -177,10 +191,10 @@ class onPlayerInteractEvent implements Listener {
             }, delay);
 
             // 声音 :: 放置石头
-            delay += 20;
+            delay += 1;
             Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F), delay);
 
-            delay += 27;
+            delay += 2;
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // 声音 :: 放置石头
                 world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
@@ -192,7 +206,7 @@ class onPlayerInteractEvent implements Listener {
                 world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
             }, delay);
 
-            delay += 52;
+            delay += 3;
             location.add(0, 0.5, 0);
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // 粒子效果 :: 活塞
@@ -204,14 +218,14 @@ class onPlayerInteractEvent implements Listener {
             }, delay);
 
             // 声音 :: 活塞推出
-            delay += 34;
+            delay += 2;
             Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_PISTON_EXTEND, 1F, 1F), delay);
 
             // 声音 :: 活塞推动方块
-            delay += 20;
+            delay += 1;
             Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_METAL_PLACE, 1F, 1F), delay);
 
-            delay += 20;
+            delay += 1;
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // 声音 :: 放置石头
                 world.playSound(location, Sound.BLOCK_STONE_PLACE, 1F, 1F);
@@ -222,24 +236,10 @@ class onPlayerInteractEvent implements Listener {
             }, delay);
 
             // 声音 :: 破坏方块
-            delay += 20;
+            delay += 1;
             Bukkit.getScheduler().runTaskLater(plugin, () -> world.playSound(location, Sound.BLOCK_STONE_BREAK, 1F, 1F), delay);
 
             // 声音和粒子效果 END //
-
-            // 在声音和粒子效果播放结束后运行破坏方块的代码
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                // 如果这个方块还是基岩
-                if(clickedBlock.getType() == Material.BEDROCK){
-                    clickedBlock.setType(Material.AIR);
-                    // 使用 CoreProtect 记录这个方块被破坏
-                    if(EnableCoreProtect && player.hasPermission("BedrockMinerPlugin.CoreProtect")){
-                        coreProtectAPI.logRemoval(player.getName(), location, Material.BEDROCK, null);
-                    }
-                    // Lock :: 释放这个方块的锁
-                    BlockList.remove(clickedBlock);
-                }
-            }, delay);
         });
     }
 
